@@ -28,7 +28,7 @@
 
 static volatile uint16_t vbl_ticks = 0;
 static uint16_t last_keys = 0;
-static uint16_t curr_keys = 0;
+uint16_t curr_keys = 0;
 
 uint16_t scan_keys(void) {
 	last_keys = curr_keys;
@@ -54,6 +54,17 @@ void wait_keypress(void) {
 	while (!scan_keys()) vblank_wait();
 }
 
+void tile_copy_2bpp_to_4bpp(uint8_t __wf_iram* dest, const uint8_t __far* src, size_t len) {
+	uint16_t __wf_iram* dest16 = (uint16_t __wf_iram*) dest;
+	const uint16_t __far* src16 = (const uint16_t __far*) src;
+
+	while (len) {
+		*(dest16++) = *(src16++);
+		*(dest16++) = 0;
+		len -= 2;
+	}
+}
+
 // === Test patterns ===
 
 static const char __far display_pluge_name[] = "PLUGE";
@@ -64,6 +75,9 @@ void display_grid(void __far* userdata);
 
 static const char __far display_color_bars_name[] = "Color bars";
 void display_color_bars(void __far* userdata);
+
+static const char __far display_drop_shadow_name[] = "Drop shadow";
+void display_drop_shadow(void __far* userdata);
 
 // === Menu system ===
 
@@ -84,6 +98,7 @@ static const menu_entry_t __far main_menu_entries[] = {
 	MENU_ENTRY(display_pluge, NULL, 0),
 	MENU_ENTRY(display_color_bars, NULL, MF_COLOR_ONLY),
 	MENU_ENTRY(display_grid, NULL, 0),
+	MENU_ENTRY(display_drop_shadow, NULL, 0),
 	MENU_ENTRY_END()
 };
 
