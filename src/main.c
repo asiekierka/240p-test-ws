@@ -150,7 +150,7 @@ static bool can_use_entry(const menu_entry_t __far* entry) {
 	return true;
 }
 
-__attribute__((noinline))
+__attribute__((noinline, optimize("-O0")))
 void display_menu(const menu_entry_t __far* entries) {
 	int menu_y = 0;
 	entries++;
