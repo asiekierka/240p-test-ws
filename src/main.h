@@ -21,6 +21,7 @@
 #include <wonderful.h>
 #include <ws.h>
 
+extern volatile uint16_t vbl_ticks;
 extern uint16_t curr_keys;
 uint16_t scan_keys(void);
 

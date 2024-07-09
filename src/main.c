@@ -26,7 +26,7 @@
 
 // === General constants, IRQ handler ===
 
-static volatile uint16_t vbl_ticks = 0;
+volatile uint16_t vbl_ticks = 0;
 static uint16_t last_keys = 0;
 uint16_t curr_keys = 0;
 
@@ -76,6 +76,9 @@ void display_grid(void __far* userdata);
 static const char __far display_color_bars_name[] = "Color bars";
 void display_color_bars(void __far* userdata);
 
+static const char __far display_full_color_name[] = "Full color palette";
+void display_full_color(void __far* userdata);
+
 static const char __far display_drop_shadow_name[] = "Drop shadow test";
 void display_drop_shadow(void __far* userdata);
 
@@ -97,6 +100,7 @@ static const menu_entry_t __far main_menu_entries[] = {
 	MENU_ENTRY_TITLE(main_menu),
 	MENU_ENTRY(display_pluge, NULL, 0),
 	MENU_ENTRY(display_color_bars, NULL, MF_COLOR_ONLY),
+	MENU_ENTRY(display_full_color, NULL, MF_COLOR_ONLY),
 	MENU_ENTRY(display_grid, NULL, 0),
 	MENU_ENTRY(display_drop_shadow, NULL, 0),
 	MENU_ENTRY_END()
@@ -171,6 +175,11 @@ void display_menu(const menu_entry_t __far* entries) {
 	entries++;
 
 menu_redraw:
+	cpu_irq_disable();
+	ws_hwint_set_handler(HWINT_IDX_VBLANK, vblank_int_handler);
+	ws_hwint_set(HWINT_VBLANK);
+	cpu_irq_enable();
+
 	outportw(IO_DISPLAY_CTRL, 0x0700);
 	outportb(IO_SCR_BASE, SCR1_BASE(screen_1) | SCR2_BASE(screen_2));
 	ws_system_mode_set(WS_MODE_MONO);
@@ -249,11 +258,6 @@ menu_redraw:
 
 void main(void) {
 	outportb(IO_INT_NMI_CTRL, 0);
-
-	cpu_irq_disable();
-	ws_hwint_set_handler(HWINT_IDX_VBLANK, vblank_int_handler);
-	ws_hwint_enable(HWINT_VBLANK);
-	cpu_irq_enable();
 
 	display_menu(main_menu_entries);
 	while(1);
