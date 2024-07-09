@@ -76,7 +76,7 @@ void display_grid(void __far* userdata);
 static const char __far display_color_bars_name[] = "Color bars";
 void display_color_bars(void __far* userdata);
 
-static const char __far display_drop_shadow_name[] = "Drop shadow";
+static const char __far display_drop_shadow_name[] = "Drop shadow test";
 void display_drop_shadow(void __far* userdata);
 
 // === Menu system ===
@@ -92,7 +92,7 @@ typedef struct {
 #define MENU_ENTRY(func, data, flags) { func ## _name, func, data, flags }
 #define MENU_ENTRY_END() { NULL, NULL, NULL, 0 }
 
-static const char __far main_menu_name[] = "- 144p Test Suite for WS (0.1.0) -";
+static const char __far main_menu_name[] = "- 144p Test Suite for WS (0.1.1) -";
 static const menu_entry_t __far main_menu_entries[] = {
 	MENU_ENTRY_TITLE(main_menu),
 	MENU_ENTRY(display_pluge, NULL, 0),

@@ -8,6 +8,7 @@ Currently implemented:
 - PLUGE (WS/WSC)
 - Color bars (WSC only)
 - Grid (WS/WSC)
+- Drop shadow test (WS/WSC)
 
 ## License
 

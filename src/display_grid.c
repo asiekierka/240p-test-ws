@@ -36,8 +36,8 @@ void display_grid(void __far* userdata) {
 		MEM_COLOR_PALETTE(1)[1] = RGB(15, 0, 0);
 	} else {
 		ws_display_set_shade_lut(SHADE_LUT_DEFAULT);
-		outportw(IO_SCR_PAL_0, MONO_PAL_COLORS(0, 4, 0, 0));
-		outportw(IO_SCR_PAL_1, MONO_PAL_COLORS(0, 7, 0, 0));
+		outportw(IO_SCR_PAL_0, MONO_PAL_COLORS(7, 0, 7, 7));
+		outportw(IO_SCR_PAL_1, MONO_PAL_COLORS(7, 4, 7, 7));
 	}
 
 	memcpy(MEM_TILE(0), tile_grid, sizeof(tile_grid));
