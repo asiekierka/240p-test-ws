@@ -1,5 +1,5 @@
-local MAX_WIDTH = 7
-local MAX_HEIGHT = 7
+local MAX_WIDTH = 8
+local MAX_HEIGHT = 8
 local ROM_OFFSET_SHIFT = 0
 
 local bdf = dofile("lib/bdf.lua")
