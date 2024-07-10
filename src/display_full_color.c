@@ -19,10 +19,12 @@
 #include <wonderful.h>
 #include <ws.h>
 
+#ifndef __WONDERFUL_WWITCH__
+
 #include "iram.h"
 #include "main.h"
 
-static const uint32_t __far bar_data[3] = {
+static const uint32_t __wf_rom bar_data[3] = {
 	0xFF00031C,
 	0xFF0FF071,
 	0xFFFF3FC7
@@ -44,7 +46,7 @@ static void __far full_color_vblank_int_handler(void) {
 }
 
 
-void display_full_color(void __far* userdata) {
+void display_full_color(void *userdata) {
 	if (!ws_system_is_color()) return;
 
 	outportw(IO_DISPLAY_CTRL, 0);
@@ -57,10 +59,10 @@ void display_full_color(void __far* userdata) {
 	ws_screen_fill_tiles(screen_2, 0, 0, 0, 28, 32);
 	memset(MEM_TILE_4BPP(0), 0, 4 * 32);
 	for (int i = 0; i < 3; i++) {
-		((uint32_t*) MEM_TILE_4BPP(1 + i))[0] = bar_data[i];
-		((uint32_t*) MEM_TILE_4BPP(1 + i))[1] = bar_data[i];
-		((uint32_t*) MEM_TILE_4BPP(1 + i))[4] = bar_data[i];
-		((uint32_t*) MEM_TILE_4BPP(1 + i))[5] = bar_data[i];
+		((uint32_t __wf_iram*) MEM_TILE_4BPP(1 + i))[0] = bar_data[i];
+		((uint32_t __wf_iram*) MEM_TILE_4BPP(1 + i))[1] = bar_data[i];
+		((uint32_t __wf_iram*) MEM_TILE_4BPP(1 + i))[4] = bar_data[i];
+		((uint32_t __wf_iram*) MEM_TILE_4BPP(1 + i))[5] = bar_data[i];
 	}
 	for (int i = 0; i < 24; i++) {
 		ws_screen_fill_tiles(screen_1, (1 + (i % 3)) | SCR_ENTRY_PALETTE(     i / 3 ), 2 + i, 1, 1, 16);
@@ -80,3 +82,4 @@ void display_full_color(void __far* userdata) {
 	outportb(IO_SCR2_SCRL_Y, 0);
 }
 
+#endif

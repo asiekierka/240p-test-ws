@@ -24,6 +24,14 @@
 #include <wonderful.h>
 #include <ws.h>
 
+#ifdef __WONDERFUL_WWITCH__
+
+#define screen_1 ((ws_screen_cell_t __wf_iram*) 0x1000)
+#define screen_2 ((ws_screen_cell_t __wf_iram*) 0x1800)
+#define sprites ((ws_sprite_t __wf_iram*) 0xE00)
+
+#else
+
 // Remember to define IRAM_IMPLEMENTATION in only one .c file!
 // Defining it in zero .c files will cause missing symbols.
 // Defining it in multiple .c files will cause duplicate symbols.
@@ -64,5 +72,7 @@ IRAM_EXTERN ws_sound_wavetable_t wave_ram;
 /* IRAM LAYOUT DECLARATION END */
 
 #undef IRAM_EXTERN
+
+#endif
 
 #endif /* __IRAM_H__ */

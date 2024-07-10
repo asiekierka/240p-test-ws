@@ -22,12 +22,12 @@
 #include "iram.h"
 #include "main.h"
 
-static const char __far text_red[] = "Red";
-static const char __far text_green[] = "Green";
-static const char __far text_blue[] = "Blue";
-static const char __far text_white[] = "White";
-static const char __far hex_digits[] = "0123456789ABCDEF";
-static const uint32_t __far bar_data[24] = {
+static const char __wf_rom text_red[] = "Red";
+static const char __wf_rom text_green[] = "Green";
+static const char __wf_rom text_blue[] = "Blue";
+static const char __wf_rom text_white[] = "White";
+static const char __wf_rom hex_digits[] = "0123456789ABCDEF";
+static const uint32_t __wf_rom bar_data[24] = {
     0x00000000,
     0x0000000F,
     0x000000FF,
@@ -54,7 +54,7 @@ static const uint32_t __far bar_data[24] = {
     0xFFFFFFFF
 };
 
-void display_color_bars(void __far* userdata) {
+void display_color_bars(void *userdata) {
 	if (!ws_system_is_color()) return;
 
 	outportw(IO_DISPLAY_CTRL, 0);
@@ -74,7 +74,7 @@ void display_color_bars(void __far* userdata) {
 	memset(MEM_TILE_4BPP(0), 0, 128 * 32);
 	for (int i = 0; i < 24; i++) {
 		for (int j = 0; j < 8; j++)
-			((uint32_t*) MEM_TILE_4BPP(256 + i))[j] = bar_data[i];
+			((uint32_t __wf_iram*) MEM_TILE_4BPP(256 + i))[j] = bar_data[i];
 
 		ws_screen_put_tile(screen_1, 32 + i, 3 + i, 2);
 		ws_screen_put_tile(screen_1, 32 + i, 3 + i, 6);
@@ -96,12 +96,12 @@ void display_color_bars(void __far* userdata) {
 		ws_screen_put_tile(screen_1, 92 + i, i, 15);
 	}
 	for (int i = 0; i < 16; i++) {
-		vwf8_draw_char((uint16_t*) MEM_TILE_4BPP(32), hex_digits[i], i * 12);
+		vwf8_draw_char((uint16_t __wf_iram*) MEM_TILE_4BPP(32), hex_digits[i], i * 12);
 	}
-	vwf8_draw_string((uint16_t*) MEM_TILE_4BPP(80), text_red, 0);
-	vwf8_draw_string((uint16_t*) MEM_TILE_4BPP(84), text_green, 0);
-	vwf8_draw_string((uint16_t*) MEM_TILE_4BPP(88), text_blue, 0);
-	vwf8_draw_string((uint16_t*) MEM_TILE_4BPP(92), text_white, 0);
+	vwf8_draw_string((uint16_t __wf_iram*) MEM_TILE_4BPP(80), text_red, 0);
+	vwf8_draw_string((uint16_t __wf_iram*) MEM_TILE_4BPP(84), text_green, 0);
+	vwf8_draw_string((uint16_t __wf_iram*) MEM_TILE_4BPP(88), text_blue, 0);
+	vwf8_draw_string((uint16_t __wf_iram*) MEM_TILE_4BPP(92), text_white, 0);
 
         outportb(IO_SCR1_SCRL_X, 252);
         outportb(IO_SCR1_SCRL_Y, 6);

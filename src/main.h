@@ -27,11 +27,11 @@ uint16_t scan_keys(void);
 
 void vblank_wait(void);
 void wait_keypress(void);
-void tile_copy_2bpp_to_4bpp(uint8_t __wf_iram* dest, const uint8_t __far* src, size_t len);
+void tile_copy_2bpp_to_4bpp(uint8_t __wf_iram* dest, const uint8_t __wf_rom* src, size_t len);
 
 // 8-high variable width font system
-int vwf8_get_string_width(const char __far* s);
-int vwf8_draw_char(uint16_t *tile, uint8_t chr, int x);
-int vwf8_draw_string(uint16_t *tile, const char __far* s, int x);
+int vwf8_get_string_width(const char __wf_rom* s);
+int vwf8_draw_char(uint16_t __wf_iram* tile, uint8_t chr, int x);
+int vwf8_draw_string(uint16_t __wf_iram* tile, const char __wf_rom* s, int x);
 
 #endif

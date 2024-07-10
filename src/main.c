@@ -18,6 +18,9 @@
 #include <string.h>
 #include <wonderful.h>
 #include <ws.h>
+#ifdef __WONDERFUL_WWITCH__
+#include <sys/bios.h>
+#endif
 
 #include "../build/assets/fonts.h"
 
@@ -32,10 +35,15 @@ uint16_t curr_keys = 0;
 
 uint16_t scan_keys(void) {
 	last_keys = curr_keys;
+#ifdef __WONDERFUL_WWITCH__
+	curr_keys = key_press_check();
+#else
 	curr_keys = ws_keypad_scan();
+#endif
 	return curr_keys & ~last_keys;
 }
 
+#ifndef __WONDERFUL_WWITCH__
 __attribute__((assume_ss_data, interrupt))
 void __far vblank_int_handler(void) {
         ws_hwint_ack(HWINT_VBLANK);
@@ -53,10 +61,24 @@ void vblank_wait(void) {
 void wait_keypress(void) {
 	while (!scan_keys()) vblank_wait();
 }
+#else
+void vblank_wait(void) {
+	sys_wait(1);
+}
 
-void tile_copy_2bpp_to_4bpp(uint8_t __wf_iram* dest, const uint8_t __far* src, size_t len) {
+void wait_keypress(void) {
+	key_wait();
+}
+
+static const char __wf_rom display_exit_name[] = "Exit to Freya";
+void display_exit(void *userdata) {
+	bios_exit();
+}
+#endif
+
+void tile_copy_2bpp_to_4bpp(uint8_t __wf_iram* dest, const uint8_t __wf_rom* src, size_t len) {
 	uint16_t __wf_iram* dest16 = (uint16_t __wf_iram*) dest;
-	const uint16_t __far* src16 = (const uint16_t __far*) src;
+	const uint16_t __wf_rom* src16 = (const uint16_t __wf_rom*) src;
 
 	while (len) {
 		*(dest16++) = *(src16++);
@@ -67,61 +89,64 @@ void tile_copy_2bpp_to_4bpp(uint8_t __wf_iram* dest, const uint8_t __far* src, s
 
 // === Test patterns ===
 
-static const char __far display_pluge_name[] = "PLUGE";
-void display_pluge(void __far* userdata);
+static const char __wf_rom display_pluge_name[] = "PLUGE";
+void display_pluge(void *userdata);
 
-static const char __far display_grid_name[] = "Grid";
-void display_grid(void __far* userdata);
+static const char __wf_rom display_grid_name[] = "Grid";
+void display_grid(void *userdata);
 
-static const char __far display_color_bars_name[] = "Color bars";
-void display_color_bars(void __far* userdata);
+static const char __wf_rom display_color_bars_name[] = "Color bars";
+void display_color_bars(void *userdata);
 
-static const char __far display_full_color_name[] = "Full color palette";
-void display_full_color(void __far* userdata);
+static const char __wf_rom display_full_color_name[] = "Full color palette";
+void display_full_color(void *userdata);
 
-static const char __far display_drop_shadow_name[] = "Drop shadow test";
-void display_drop_shadow(void __far* userdata);
+static const char __wf_rom display_drop_shadow_name[] = "Drop shadow test";
+void display_drop_shadow(void *userdata);
 
 // === Menu system ===
 
 #define MF_COLOR_ONLY (1 << 0)
 typedef struct {
-	const char __far *name;
-	void (*action)(void __far*);
-	void __far *userdata;
+	const char __wf_rom *name;
+	void (*action)(void*);
+	void *userdata;
 	uint16_t flags;
 } menu_entry_t;
 #define MENU_ENTRY_TITLE(title) { title ## _name, NULL, NULL, 0 }
 #define MENU_ENTRY(func, data, flags) { func ## _name, func, data, flags }
 #define MENU_ENTRY_END() { NULL, NULL, NULL, 0 }
 
-static const char __far main_menu_name[] = "- 144p Test Suite for WS (0.1.1) -";
-static const menu_entry_t __far main_menu_entries[] = {
+static const char __wf_rom main_menu_name[] = "- 144p Test Suite for WS (0.1.1) -";
+static const menu_entry_t __wf_rom main_menu_entries[] = {
 	MENU_ENTRY_TITLE(main_menu),
 	MENU_ENTRY(display_pluge, NULL, 0),
 	MENU_ENTRY(display_color_bars, NULL, MF_COLOR_ONLY),
+#ifndef __WONDERFUL_WWITCH__
 	MENU_ENTRY(display_full_color, NULL, MF_COLOR_ONLY),
+#endif
 	MENU_ENTRY(display_grid, NULL, 0),
 	MENU_ENTRY(display_drop_shadow, NULL, 0),
+#ifdef __WONDERFUL_WWITCH__
+	MENU_ENTRY(display_exit, NULL, 0),
+#endif
 	MENU_ENTRY_END()
 };
 
-__attribute__((noinline))
-int vwf8_get_string_width(const char __far* s) {
+int vwf8_get_string_width(const char __wf_rom* s) {
     int w = 0;
 
     while (*s) {
         uint8_t chr = *(s++);
-        const uint8_t __far* font = font8_bitmap + ((chr - 0x20) * 9);
+        const uint8_t __wf_rom* font = font8_bitmap + ((chr - 0x20) * 9);
         w += *font;
     }
 
     return w;
 }
 
-__attribute__((noinline))
-int vwf8_draw_char(uint16_t *tile, uint8_t chr, int x) {
-    const uint8_t __far* font = font8_bitmap + ((chr - 0x20) * 9);
+int vwf8_draw_char(uint16_t __wf_iram* tile, uint8_t chr, int x) {
+    const uint8_t __wf_rom* font = font8_bitmap + ((chr - 0x20) * 9);
 
     int width = *(font++);
     int next_x = x + width;
@@ -150,17 +175,16 @@ int vwf8_draw_char(uint16_t *tile, uint8_t chr, int x) {
     return next_x;
 }
 
-__attribute__((noinline))
-int vwf8_draw_string(uint16_t *tile, const char __far* s, int x) {
+int vwf8_draw_string(uint16_t __wf_iram* tile, const char __wf_rom* s, int x) {
 	while (*s) {
 		x = vwf8_draw_char(tile, *(s++), x);
 	}
 	return x;
 }
 
-static const uint16_t __far tile_bg[8]    = { 0xFF00, 0xFF00, 0xFF00, 0xFF00, 0xFF00, 0xFF00, 0xFFFF, 0x00 };
+static const uint16_t __wf_rom tile_bg[8] = { 0xFF00, 0xFF00, 0xFF00, 0xFF00, 0xFF00, 0xFF00, 0xFFFF, 0x00 };
 
-static bool can_use_entry(const menu_entry_t __far* entry) {
+static bool can_use_entry(const menu_entry_t __wf_rom* entry) {
 	if (entry->flags & MF_COLOR_ONLY) {
 		if (!ws_system_is_color()) {
 			return false;
@@ -169,16 +193,14 @@ static bool can_use_entry(const menu_entry_t __far* entry) {
 	return true;
 }
 
-__attribute__((noinline, optimize("-O0")))
-void display_menu(const menu_entry_t __far* entries) {
-	int menu_y = 0;
-	entries++;
-
-menu_redraw:
+__attribute__((noinline))
+static int display_menu_init(const menu_entry_t __wf_rom* entries, int menu_y) {
+#ifndef __WONDERFUL_WWITCH__
 	cpu_irq_disable();
 	ws_hwint_set_handler(HWINT_IDX_VBLANK, vblank_int_handler);
 	ws_hwint_set(HWINT_VBLANK);
 	cpu_irq_enable();
+#endif
 
 	outportw(IO_DISPLAY_CTRL, 0x0700);
 	outportb(IO_SCR_BASE, SCR1_BASE(screen_1) | SCR2_BASE(screen_2));
@@ -206,13 +228,13 @@ menu_redraw:
 
 	// Draw title
 	{
-		const char __far *title = (entries - 1)->name;
+		const char __wf_rom *title = (entries - 1)->name;
 		int title_w = vwf8_get_string_width(title);
 		int mx = (DISPLAY_WIDTH_PX - title_w) >> 1;
-		vwf8_draw_string((uint16_t*) MEM_TILE(0), title, mx);
+		vwf8_draw_string((uint16_t __wf_iram*) MEM_TILE(0), title, mx);
 	}
 
-	const menu_entry_t __far* drawn_entry = entries;
+	const menu_entry_t __wf_rom* drawn_entry = entries;
 
 	// Draw entries
 	{
@@ -220,7 +242,7 @@ menu_redraw:
 		while (drawn_entry->action) {
 			if (!can_use_entry(drawn_entry))
 				ws_screen_modify_tiles(screen_1, 0xFFFF, SCR_ENTRY_PALETTE(2), 0, (my >> 5) + 1, 28, 1);
-			vwf8_draw_string((uint16_t*) MEM_TILE(my), drawn_entry->name, 4);
+			vwf8_draw_string((uint16_t __wf_iram*) MEM_TILE(my), drawn_entry->name, 4);
 			drawn_entry++;
 			menu_count++;
 			my += 32;
@@ -228,6 +250,16 @@ menu_redraw:
 	}
 
 	outportw(IO_DISPLAY_CTRL, DISPLAY_SCR1_ENABLE);
+	return menu_count;
+}
+
+__attribute__((optimize("-O0")))
+void display_menu(const menu_entry_t __wf_rom* entries) {
+	int menu_y = 0;
+	entries++;
+
+menu_redraw:
+	; int menu_count = display_menu_init(entries, menu_y);
 
 	while (true) {
 		vblank_wait();
@@ -257,8 +289,6 @@ menu_redraw:
 };
 
 void main(void) {
-	outportb(IO_INT_NMI_CTRL, 0);
-
 	display_menu(main_menu_entries);
 	while(1);
 }

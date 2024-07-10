@@ -22,9 +22,9 @@
 #include "iram.h"
 #include "main.h"
 
-static const uint16_t __far tile_grid[8]  = { 0xFF, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x81 };
+static const uint16_t __wf_rom tile_grid[8]  = { 0xFF, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x81 };
 
-void display_grid(void __far* userdata) {
+void display_grid(void *userdata) {
 	outportw(IO_DISPLAY_CTRL, 0);
 	outportb(IO_SCR_BASE, SCR1_BASE(screen_1) | SCR2_BASE(screen_2));
 

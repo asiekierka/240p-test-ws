@@ -26,7 +26,7 @@
 #include "iram.h"
 #include "main.h"
 
-void display_drop_shadow(void __far* userdata) {
+void display_drop_shadow(void *userdata) {
 	outportw(IO_DISPLAY_CTRL, 0);
 	outportb(IO_SCR_BASE, SCR1_BASE(screen_1) | SCR2_BASE(screen_2));
 	outportb(IO_SPR_BASE, SPR_BASE(sprites));
