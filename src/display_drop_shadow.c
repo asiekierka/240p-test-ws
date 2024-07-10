@@ -18,6 +18,7 @@
 #include <string.h>
 #include <wonderful.h>
 #include <ws.h>
+#include <ws/display.h>
 
 #include "../build/assets/color/pyramid.h"
 #include "../build/assets/mono/pyramid.h"
@@ -25,8 +26,63 @@
 
 #include "iram.h"
 #include "main.h"
+#include "submenu.h"
+
+typedef struct {
+	uint8_t sx, sy, ticks;
+} drop_shadow_userdata_t;
+
+static void set_sprite_position(uint8_t sx, uint8_t sy) {
+	sprites[ 0].x = sx +  0; sprites[ 0].y = sy +  0;
+	sprites[ 1].x = sx +  8; sprites[ 1].y = sy +  0;
+	sprites[ 2].x = sx + 16; sprites[ 2].y = sy +  0;
+	sprites[ 3].x = sx + 24; sprites[ 3].y = sy +  0;
+	sprites[ 4].x = sx +  0; sprites[ 4].y = sy +  8;
+	sprites[ 5].x = sx +  8; sprites[ 5].y = sy +  8;
+	sprites[ 6].x = sx + 16; sprites[ 6].y = sy +  8;
+	sprites[ 7].x = sx + 24; sprites[ 7].y = sy +  8;
+	sprites[ 8].x = sx +  0; sprites[ 8].y = sy + 16;
+	sprites[ 9].x = sx +  8; sprites[ 9].y = sy + 16;
+	sprites[10].x = sx + 16; sprites[10].y = sy + 16;
+	sprites[11].x = sx + 24; sprites[11].y = sy + 16;
+	sprites[12].x = sx +  0; sprites[12].y = sy + 24;
+	sprites[13].x = sx +  8; sprites[13].y = sy + 24;
+	sprites[14].x = sx + 16; sprites[14].y = sy + 24;
+	sprites[15].x = sx + 24; sprites[15].y = sy + 24;
+}
+
+static void display_drop_shadow_tick(void *ud, bool submenu_active) {
+	drop_shadow_userdata_t *userdata = (drop_shadow_userdata_t*) ud;
+
+	if (!submenu_active && curr_keys) {
+		if ((++userdata->ticks) & 1) {
+			if (curr_keys & KEY_X1) userdata->sy--;
+			if (curr_keys & KEY_X3) userdata->sy++;
+			if (curr_keys & KEY_X4) userdata->sx--;
+			if (curr_keys & KEY_X2) userdata->sx++;
+
+			set_sprite_position(userdata->sx, userdata->sy);
+		}
+	}
+
+	outportw(IO_DISPLAY_CTRL, inportw(IO_DISPLAY_CTRL) ^ DISPLAY_SPR_ENABLE);
+}
 
 void display_drop_shadow(void *userdata) {
+	drop_shadow_userdata_t drop_shadow_userdata;
+	submenu_state_t submenu;
+	submenu.x = 0;
+	submenu.y = 0;
+	submenu.tile_start = 388;
+	submenu.width = 6;
+	submenu.entries = submenu_vrr;
+	submenu.tick = display_drop_shadow_tick;
+	submenu.userdata = &drop_shadow_userdata;
+
+	drop_shadow_userdata.sx = (DISPLAY_WIDTH_PX - 32) >> 1;
+	drop_shadow_userdata.sy = (DISPLAY_HEIGHT_PX - 32) >> 1;
+	set_sprite_position(drop_shadow_userdata.sx, drop_shadow_userdata.sy);
+
 	outportw(IO_DISPLAY_CTRL, 0);
 	outportb(IO_SCR_BASE, SCR1_BASE(screen_1) | SCR2_BASE(screen_2));
 	outportb(IO_SPR_BASE, SPR_BASE(sprites));
@@ -53,9 +109,10 @@ void display_drop_shadow(void *userdata) {
 		ws_screen_put_tiles(screen_1, gfx_mono_pyramid_map, 0, 0, 28, 18);
 	}
 
-	// Configure sprite.
 	outportw(IO_DISPLAY_CTRL, DISPLAY_SCR1_ENABLE);
+	submenu_init(&submenu);
 
+	// Configure sprite.
 	sprites[ 0].attr = 384 | SPR_ATTR_PALETTE(4) | SPR_ATTR_PRIORITY;
 	sprites[ 1].attr = 385 | SPR_ATTR_PALETTE(4) | SPR_ATTR_PRIORITY;
 	sprites[ 2].attr = 385 | SPR_ATTR_PALETTE(4) | SPR_ATTR_PRIORITY | SPR_ATTR_FLIP_H;
@@ -73,39 +130,9 @@ void display_drop_shadow(void *userdata) {
 	sprites[14].attr = 385 | SPR_ATTR_PALETTE(4) | SPR_ATTR_PRIORITY | SPR_ATTR_FLIP_H | SPR_ATTR_FLIP_V;
 	sprites[15].attr = 384 | SPR_ATTR_PALETTE(4) | SPR_ATTR_PRIORITY | SPR_ATTR_FLIP_H | SPR_ATTR_FLIP_V;
 
-	uint8_t sx = (SCR_WIDTH_PX - 32) >> 1;
-	uint8_t sy = (SCR_HEIGHT_PX - 32) >> 1;
-
 	while (true) {
-		vblank_wait();
-		outportw(IO_DISPLAY_CTRL, DISPLAY_SCR1_ENABLE);
-
-		uint16_t keys_pressed = scan_keys();
-		if (curr_keys & KEY_X1) sy--;
-		if (curr_keys & KEY_X3) sy++;
-		if (curr_keys & KEY_X4) sx--;
-		if (curr_keys & KEY_X2) sx++;
+		uint16_t keys_pressed = submenu_loop(&submenu);
 		if (keys_pressed & (KEY_A | KEY_B | KEY_START)) break;
-
-		sprites[ 0].x = sx +  0; sprites[ 0].y = sy +  0;
-		sprites[ 1].x = sx +  8; sprites[ 1].y = sy +  0;
-		sprites[ 2].x = sx + 16; sprites[ 2].y = sy +  0;
-		sprites[ 3].x = sx + 24; sprites[ 3].y = sy +  0;
-		sprites[ 4].x = sx +  0; sprites[ 4].y = sy +  8;
-		sprites[ 5].x = sx +  8; sprites[ 5].y = sy +  8;
-		sprites[ 6].x = sx + 16; sprites[ 6].y = sy +  8;
-		sprites[ 7].x = sx + 24; sprites[ 7].y = sy +  8;
-		sprites[ 8].x = sx +  0; sprites[ 8].y = sy + 16;
-		sprites[ 9].x = sx +  8; sprites[ 9].y = sy + 16;
-		sprites[10].x = sx + 16; sprites[10].y = sy + 16;
-		sprites[11].x = sx + 24; sprites[11].y = sy + 16;
-		sprites[12].x = sx +  0; sprites[12].y = sy + 24;
-		sprites[13].x = sx +  8; sprites[13].y = sy + 24;
-		sprites[14].x = sx + 16; sprites[14].y = sy + 24;
-		sprites[15].x = sx + 24; sprites[15].y = sy + 24;
-
-		vblank_wait();
-		outportw(IO_DISPLAY_CTRL, DISPLAY_SCR1_ENABLE | DISPLAY_SPR_ENABLE);
 	}
 }
 

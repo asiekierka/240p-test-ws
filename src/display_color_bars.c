@@ -96,12 +96,12 @@ void display_color_bars(void *userdata) {
 		ws_screen_put_tile(screen_1, 92 + i, i, 15);
 	}
 	for (int i = 0; i < 16; i++) {
-		vwf8_draw_char((uint16_t __wf_iram*) MEM_TILE_4BPP(32), hex_digits[i], i * 12);
+		vwf8_draw_char((uint8_t __wf_iram*) MEM_TILE_4BPP(32), hex_digits[i], i * 12);
 	}
-	vwf8_draw_string((uint16_t __wf_iram*) MEM_TILE_4BPP(80), text_red, 0);
-	vwf8_draw_string((uint16_t __wf_iram*) MEM_TILE_4BPP(84), text_green, 0);
-	vwf8_draw_string((uint16_t __wf_iram*) MEM_TILE_4BPP(88), text_blue, 0);
-	vwf8_draw_string((uint16_t __wf_iram*) MEM_TILE_4BPP(92), text_white, 0);
+	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(80), text_red, 0);
+	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(84), text_green, 0);
+	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(88), text_blue, 0);
+	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(92), text_white, 0);
 
         outportb(IO_SCR1_SCRL_X, 252);
         outportb(IO_SCR1_SCRL_Y, 6);

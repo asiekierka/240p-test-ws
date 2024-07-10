@@ -145,16 +145,28 @@ int vwf8_get_string_width(const char __wf_rom* s) {
     return w;
 }
 
-int vwf8_draw_char(uint16_t __wf_iram* tile, uint8_t chr, int x) {
+static const uint8_t __wf_rom font_width_mask[] = {
+	0, 0, 0x1, 0x3, 0x7, 0xF, 0x1F, 0x3F, 0x7F, 0xFF
+};
+
+int vwf8_draw_char(uint8_t __wf_iram* tile, uint8_t chr, int x) {
     const uint8_t __wf_rom* font = font8_bitmap + ((chr - 0x20) * 9);
 
     int width = *(font++);
     int next_x = x + width;
     int x_fine = (17 - width - (x & 0x7));
 
-    uint16_t mask = 0xFFFF;
+    uint16_t mask = ~(font_width_mask[width] << x_fine);
 
     if (ws_system_mode_get() & 0x40) {
+        tile += (x >> 3) << 5;
+
+        for (int i = 0; i < 8; i++, font++, tile += 4) {
+            uint16_t shift = (*font) << x_fine;
+            tile[0] = ((tile[0] & (mask >> 8)) | (shift >> 8)) & 0xFF;
+            tile[32] = ((tile[32] & mask) | shift) & 0xFF;
+        }
+    } else {
         tile += (x >> 3) << 4;
 
         for (int i = 0; i < 8; i++, font++, tile += 2) {
@@ -162,20 +174,12 @@ int vwf8_draw_char(uint16_t __wf_iram* tile, uint8_t chr, int x) {
             tile[0] = ((tile[0] & (mask >> 8)) | (shift >> 8)) & 0xFF;
             tile[16] = ((tile[16] & mask) | shift) & 0xFF;
         }
-    } else {
-        tile += x & (~0x7);
-
-        for (int i = 0; i < 8; i++, font++, tile++) {
-            uint16_t shift = (*font) << x_fine;
-            tile[0] = ((tile[0] & (mask >> 8)) | (shift >> 8)) & 0xFF;
-            tile[8] = ((tile[8] & mask) | shift) & 0xFF;
-        }
     }
 
     return next_x;
 }
 
-int vwf8_draw_string(uint16_t __wf_iram* tile, const char __wf_rom* s, int x) {
+int vwf8_draw_string(uint8_t __wf_iram* tile, const char __wf_rom* s, int x) {
 	while (*s) {
 		x = vwf8_draw_char(tile, *(s++), x);
 	}
@@ -231,7 +235,7 @@ static int display_menu_init(const menu_entry_t __wf_rom* entries, int menu_y) {
 		const char __wf_rom *title = (entries - 1)->name;
 		int title_w = vwf8_get_string_width(title);
 		int mx = (DISPLAY_WIDTH_PX - title_w) >> 1;
-		vwf8_draw_string((uint16_t __wf_iram*) MEM_TILE(0), title, mx);
+		vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE(0), title, mx);
 	}
 
 	const menu_entry_t __wf_rom* drawn_entry = entries;
@@ -242,7 +246,7 @@ static int display_menu_init(const menu_entry_t __wf_rom* entries, int menu_y) {
 		while (drawn_entry->action) {
 			if (!can_use_entry(drawn_entry))
 				ws_screen_modify_tiles(screen_1, 0xFFFF, SCR_ENTRY_PALETTE(2), 0, (my >> 5) + 1, 28, 1);
-			vwf8_draw_string((uint16_t __wf_iram*) MEM_TILE(my), drawn_entry->name, 4);
+			vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE(my), drawn_entry->name, 4);
 			drawn_entry++;
 			menu_count++;
 			my += 32;
