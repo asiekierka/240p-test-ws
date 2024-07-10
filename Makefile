@@ -9,7 +9,7 @@ include $(WONDERFUL_TOOLCHAIN)/target/$(TARGET)/makedefs.mk
 # Metadata
 # --------
 
-NAME		:= 240p-test-ws
+NAME		:= 144p-test-ws
 
 # Source code paths
 # -----------------

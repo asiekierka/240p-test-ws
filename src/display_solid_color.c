@@ -101,6 +101,19 @@ void display_solid_color(void *userdata) {
 
 	while (true) {
 		uint16_t keys_pressed = submenu_loop(&submenu);
+        if (keys_pressed & (KEY_X1 | KEY_X2 | KEY_X3 | KEY_X4 | KEY_Y1 | KEY_Y2 | KEY_Y3 | KEY_Y4)) {
+	        if (ws_system_is_color()) {
+                uint16_t color = MEM_COLOR_PALETTE(0)[0];
+                if      (color == RGB( 0, 15,  0)) color = RGB( 0,  0, 15);
+                else if (color == RGB( 15, 0,  0)) color = RGB( 0, 15,  0);
+                else if (color == RGB( 0,  0,  0)) color = RGB(15,  0,  0);
+                else if (color == RGB(15, 15, 15)) color = RGB( 0,  0,  0);
+                else                               color = RGB(15, 15, 15);
+                MEM_COLOR_PALETTE(0)[0] = color;
+            } else {
+                outportb(IO_LCD_SHADE_45, inportb(IO_LCD_SHADE_45) >= 0xF0 ? 0x00 : 0xFF);
+            }
+        }
 		if (keys_pressed & (KEY_A | KEY_B | KEY_START)) break;
 	}
 }
