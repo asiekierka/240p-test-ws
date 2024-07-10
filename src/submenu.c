@@ -155,19 +155,19 @@ uint16_t submenu_loop(submenu_state_t *state) {
             }
 
             if (keys_pressed & KEY_X1) {
-                if (submenu_option > 0) {
+                do {
+                    if (submenu_option == 0) submenu_option = state->entry_count;
                     submenu_option--;
-                    // while (!can_use_entry(state->entries + submenu_option)) submenu_option--;
-                }
+                } while (/*!can_use_entry(entries + menu_y)*/0);
                 submenu_redraw = true;
                 continue;
             }
             
             if (keys_pressed & KEY_X3) {
-                if (submenu_option < (state->entry_count - 1)) {
+                do {
                     submenu_option++;
-                    // while (!can_use_entry(state->entries + submenu_option)) submenu_option++;
-                }
+                    if (submenu_option >= state->entry_count) submenu_option = 0;
+                } while (/*!can_use_entry(entries + menu_y)*/0);
                 submenu_redraw = true;
                 continue;
             }

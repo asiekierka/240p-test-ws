@@ -348,16 +348,16 @@ menu_redraw:
 			goto menu_redraw;
 		}
 		if (keys_pressed & KEY_X1) {
-			if (menu_y > 0) {
+			do {
+				if (menu_y == 0) menu_y = menu_count;
 				menu_y--;
-				while (!can_use_entry(entries + menu_y)) menu_y--;
-			}
+			} while (!can_use_entry(entries + menu_y));
 		}
 		if (keys_pressed & KEY_X3) {
-			if (menu_y < (menu_count - 1)) {
+			do {
 				menu_y++;
-				while (!can_use_entry(entries + menu_y)) menu_y++;
-			}
+				if (menu_y >= menu_count) menu_y = 0;
+			} while (!can_use_entry(entries + menu_y));
 		}
 		if (menu_y != last_menu_y) {
 			ws_screen_modify_tiles(screen_1, 0x01FF, SCR_ENTRY_PALETTE(0), 0, last_menu_y + 2, 28, 1);
