@@ -89,20 +89,23 @@ void tile_copy_2bpp_to_4bpp(uint8_t __wf_iram* dest, const uint8_t __wf_rom* src
 
 // === Test patterns ===
 
-static const char __wf_rom display_pluge_name[] = "PLUGE";
-void display_pluge(void *userdata);
-
-static const char __wf_rom display_grid_name[] = "Grid";
-void display_grid(void *userdata);
-
 static const char __wf_rom display_color_bars_name[] = "Color bars";
 void display_color_bars(void *userdata);
+
+static const char __wf_rom display_drop_shadow_name[] = "Drop shadow test";
+void display_drop_shadow(void *userdata);
 
 static const char __wf_rom display_full_color_name[] = "Full color palette";
 void display_full_color(void *userdata);
 
-static const char __wf_rom display_drop_shadow_name[] = "Drop shadow test";
-void display_drop_shadow(void *userdata);
+static const char __wf_rom display_grid_name[] = "Grid";
+void display_grid(void *userdata);
+
+static const char __wf_rom display_pluge_name[] = "PLUGE";
+void display_pluge(void *userdata);
+
+static const char __wf_rom display_solid_color_name[] = "Solid color";
+void display_solid_color(void *userdata);
 
 // === Menu system ===
 
@@ -117,11 +120,12 @@ typedef struct {
 #define MENU_ENTRY(func, data, flags) { func ## _name, func, data, flags }
 #define MENU_ENTRY_END() { NULL, NULL, NULL, 0 }
 
-static const char __wf_rom main_menu_name[] = "- 144p Test Suite for WS (0.1.1) -";
+static const char __wf_rom main_menu_name[] = "- 144p Test Suite for WS (0.2.0) -";
 static const menu_entry_t __wf_rom main_menu_entries[] = {
 	MENU_ENTRY_TITLE(main_menu),
 	MENU_ENTRY(display_pluge, NULL, 0),
 	MENU_ENTRY(display_color_bars, NULL, MF_COLOR_ONLY),
+	MENU_ENTRY(display_solid_color, NULL, 0),
 #ifndef __WONDERFUL_WWITCH__
 	MENU_ENTRY(display_full_color, NULL, MF_COLOR_ONLY),
 #endif
@@ -146,7 +150,7 @@ int vwf8_get_string_width(const char __wf_rom* s) {
 }
 
 static const uint8_t __wf_rom font_width_mask[] = {
-	0, 0, 0x1, 0x3, 0x7, 0xF, 0x1F, 0x3F, 0x7F, 0xFF
+	0, 0x1, 0x3, 0x7, 0xF, 0x1F, 0x3F, 0x7F, 0xFF
 };
 
 int vwf8_draw_char(uint8_t __wf_iram* tile, uint8_t chr, int x) {

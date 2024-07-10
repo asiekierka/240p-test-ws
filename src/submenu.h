@@ -24,7 +24,7 @@
 
 typedef struct {
 	void (*draw)(int, char*, void*);
-	void (*key)(uint16_t, void*);
+	void (*key)(int, uint16_t, void*);
 	uint16_t flags;
 } submenu_entry_t;
 #define SUBMENU_ENTRY(name, flags) { name ## _draw, name ## _key, flags }

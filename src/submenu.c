@@ -96,7 +96,7 @@ static void submenu_draw_compiler_workaround(const submenu_entry_t __wf_rom *cur
 }
 
 void submenu_draw(submenu_state_t *state, uint16_t selected) {
-    char text[65];
+    char text[47];
     uint16_t i = 0;
     uint16_t tile = state->tile_start + 1;
     const submenu_entry_t __wf_rom *current_entry = state->entries;
@@ -104,9 +104,13 @@ void submenu_draw(submenu_state_t *state, uint16_t selected) {
     while (current_entry->draw) {
         submenu_draw_compiler_workaround(current_entry, i, text, state->userdata);
         if (ws_system_mode_get() & 0x40) {
-            vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(tile), text, 1);
+            for (int i = 0; i < state->width * 8; i++) {
+                MEM_TILE_4BPP(tile)[i * 4] = 0;
+            }
+            vwf8_draw_string(MEM_TILE_4BPP(tile), text, 1);
         } else {
-            vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE(i), text, 1);
+            memset(MEM_TILE(tile), 0, 16 * state->width);
+            vwf8_draw_string(MEM_TILE(tile), text, 1);
         }
         ws_screen_modify_tiles(
             screen_2, ~SCR_ATTR_PALETTE_MASK, (i == selected) ? SCR_ATTR_PALETTE(11) : SCR_ATTR_PALETTE(10),
@@ -119,8 +123,8 @@ void submenu_draw(submenu_state_t *state, uint16_t selected) {
 }
 
 __attribute__((noinline, optimize("-O0")))
-static void submenu_key_compiler_workaround(submenu_state_t *state, submenu_entry_t __wf_rom* entry, uint16_t keys) {
-    entry->key(keys, state->userdata);
+static void submenu_key_compiler_workaround(submenu_state_t *state, int id, const submenu_entry_t __wf_rom* entry, uint16_t keys) {
+    entry->key(id, keys, state->userdata);
 }
 
 __attribute__((noinline, optimize("-O0")))
@@ -169,7 +173,7 @@ uint16_t submenu_loop(submenu_state_t *state) {
             }
 
             if (keys_pressed) {
-                submenu_key_compiler_workaround(state, state->entries + submenu_option, keys_pressed);
+                submenu_key_compiler_workaround(state, submenu_option, state->entries + submenu_option, keys_pressed);
                 submenu_redraw = true;
             }
         } else {
@@ -192,7 +196,7 @@ void submenu_vrr_draw(int id, char* buf, void* userdata) {
     sprintf(buf, vrr_format, inportb(0x16) + 1);
 }
 
-void submenu_vrr_key(uint16_t keys, void* userdata) {
+void submenu_vrr_key(int id, uint16_t keys, void* userdata) {
     uint16_t curr_value = inportb(0x16);
     int vsync_offset = inportb(0x17) - curr_value;
 
