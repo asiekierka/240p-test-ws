@@ -101,6 +101,9 @@ void display_full_color(void *userdata);
 static const char __wf_rom display_grid_name[] = "Grid";
 void display_grid(void *userdata);
 
+static const char __wf_rom display_grid_scroll_name[] = "Grid scroll test";
+void display_grid_scroll(void *userdata);
+
 static const char __wf_rom display_pluge_name[] = "PLUGE";
 void display_pluge(void *userdata);
 
@@ -131,6 +134,7 @@ static const menu_entry_t __wf_rom main_menu_entries[] = {
 #endif
 	MENU_ENTRY(display_grid, NULL, 0),
 	MENU_ENTRY(display_drop_shadow, NULL, 0),
+	MENU_ENTRY(display_grid_scroll, NULL, 0),
 #ifdef __WONDERFUL_WWITCH__
 	MENU_ENTRY(display_exit, NULL, 0),
 #endif

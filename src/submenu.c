@@ -30,7 +30,7 @@
 
 void submenu_init(submenu_state_t *state) {
     state->entry_count = 0;
-    submenu_entry_t __wf_rom *current_entry = state->entries;
+    const submenu_entry_t __wf_rom *current_entry = state->entries;
 
     while (current_entry->draw) {
         current_entry++;
