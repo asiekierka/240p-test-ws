@@ -92,7 +92,8 @@ void display_solid_color(void *userdata) {
 	} else {
         // Use shade LUT entry 5
 		ws_display_set_shade_lut(SHADE_LUT_DEFAULT);
-        outportw(IO_SCR_PAL_0, MONO_PAL_COLORS(4, 4, 4, 4));
+        outportb(IO_LCD_SHADE_45, 0x00);
+        outportw(IO_SCR_PAL_0, MONO_PAL_COLORS(5, 5, 5, 5));
         submenu.entries = submenu_shade;
 	}
 
@@ -111,7 +112,7 @@ void display_solid_color(void *userdata) {
                 else                               color = RGB(15, 15, 15);
                 MEM_COLOR_PALETTE(0)[0] = color;
             } else {
-                outportb(IO_LCD_SHADE_45, inportb(IO_LCD_SHADE_45) >= 0xF0 ? 0x00 : 0xFF);
+                outportb(IO_LCD_SHADE_45, inportb(IO_LCD_SHADE_45) <= 0x0F ? 0xFF : 0x00);
             }
         }
 		if (keys_pressed & (KEY_A | KEY_B | KEY_START)) break;
