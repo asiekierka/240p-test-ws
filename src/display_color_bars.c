@@ -103,12 +103,12 @@ void display_color_bars(void *userdata) {
 	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(88), text_blue, 0);
 	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(92), text_white, 0);
 
-        outportb(IO_SCR1_SCRL_X, 252);
-        outportb(IO_SCR1_SCRL_Y, 6);
+	outportb(IO_SCR1_SCRL_X, 252);
+	outportb(IO_SCR1_SCRL_Y, 6);
 	outportw(IO_DISPLAY_CTRL, DISPLAY_SCR1_ENABLE);
 
 	wait_keypress();
-        outportb(IO_SCR1_SCRL_X, 0);
-        outportb(IO_SCR1_SCRL_Y, 0);
+	outportb(IO_SCR1_SCRL_X, 0);
+	outportb(IO_SCR1_SCRL_Y, 0);
 }
 

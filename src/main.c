@@ -118,6 +118,7 @@ int vwf8_draw_char(uint8_t __wf_iram* tile, uint8_t chr, int x) {
     if (ws_system_mode_get() & 0x40) {
         tile += (x >> 3) << 5;
 
+		#pragma GCC unroll 8
         for (int i = 0; i < 8; i++, font++, tile += 4) {
             uint16_t shift = (*font) << x_fine;
             tile[0] = ((tile[0] & (mask >> 8)) | (shift >> 8)) & 0xFF;
@@ -126,6 +127,7 @@ int vwf8_draw_char(uint8_t __wf_iram* tile, uint8_t chr, int x) {
     } else {
         tile += (x >> 3) << 4;
 
+		#pragma GCC unroll 8
         for (int i = 0; i < 8; i++, font++, tile += 2) {
             uint16_t shift = (*font) << x_fine;
             tile[0] = ((tile[0] & (mask >> 8)) | (shift >> 8)) & 0xFF;
