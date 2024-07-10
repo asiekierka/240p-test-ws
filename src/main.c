@@ -207,6 +207,9 @@ static void display_about(void *userdata) {
 static const char __wf_rom display_color_bars_name[] = "Color bars";
 void display_color_bars(void *userdata);
 
+static const char __wf_rom display_color_bleed_name[] = "Color bleed check";
+void display_color_bleed(void *userdata);
+
 static const char __wf_rom display_drop_shadow_name[] = "Drop shadow test";
 void display_drop_shadow(void *userdata);
 
@@ -227,6 +230,9 @@ void display_pluge(void *userdata);
 
 static const char __wf_rom display_solid_color_name[] = "Solid color";
 void display_solid_color(void *userdata);
+
+static const char __wf_rom display_stripes_name[] = "Stripes/Checkerboard";
+void display_stripes(void *userdata);
 
 // === Menu system ===
 
@@ -253,6 +259,8 @@ static const menu_entry_t __wf_rom main_menu_entries[] = {
 	MENU_ENTRY(display_grid, NULL, 0),
 	MENU_ENTRY(display_drop_shadow, NULL, 0),
 	MENU_ENTRY(display_grid_scroll, NULL, 0),
+	MENU_ENTRY(display_stripes, NULL, 0),
+	MENU_ENTRY(display_color_bleed, NULL, MF_COLOR_ONLY),
 	MENU_ENTRY(display_about, NULL, 0),
 #ifdef __WONDERFUL_WWITCH__
 	MENU_ENTRY(display_exit, NULL, 0),

@@ -103,8 +103,7 @@ local function build_font(name, fonts, Y_OFFSET, is_allowed_char)
 
     local rom_datas = {}
 
-    for i=32,126 do
-        local char = chars[i]
+    local function add_char(char)
         table.insert(rom_datas, char.x + char.width + 1)
         for i=0,7 do
              if (i >= char.y and (i - char.y) < char.height) then
@@ -114,6 +113,8 @@ local function build_font(name, fonts, Y_OFFSET, is_allowed_char)
              end
         end
     end
+
+    for i=32,126 do add_char(chars[i]) end
 
     process.emit_symbol(name, table_to_string(rom_datas))
 end
