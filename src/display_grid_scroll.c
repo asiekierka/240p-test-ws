@@ -74,5 +74,7 @@ void display_grid_scroll(void *userdata) {
 		}
 		if (keys_pressed & (KEY_A | KEY_B | KEY_START)) break;
 	}
+
+	outportw(IO_SCR1_SCRL_X, 0);
 }
 
