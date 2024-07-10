@@ -52,7 +52,7 @@ static void submenu_rgb_key  (int id, uint16_t keys, void* userdata) {
     KEY_HANDLER(MEM_COLOR_PALETTE(0)[0], ((2 - id) * 4));
 }
 
-static void submenu_shade_key  (int id, uint16_t keys, void* userdata) {
+static void submenu_shade_key(int id, uint16_t keys, void* userdata) {
     uint8_t shade = inportb(IO_LCD_SHADE_45);
     if (keys & KEY_X4) shade -= 0x10;
     if (keys & KEY_X2) shade += 0x10;
