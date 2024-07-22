@@ -96,21 +96,21 @@ static void submenu_draw_compiler_workaround(const submenu_entry_t __wf_rom *cur
 }
 
 void submenu_draw(submenu_state_t *state, uint16_t selected) {
-    char text[47];
+    WW_STATIC char submenu_text[47];
     uint16_t i = 0;
     uint16_t tile = state->tile_start + 1;
     const submenu_entry_t __wf_rom *current_entry = state->entries;
 
     while (current_entry->draw) {
-        submenu_draw_compiler_workaround(current_entry, i, text, state->userdata);
+        submenu_draw_compiler_workaround(current_entry, i, submenu_text, state->userdata);
         if (ws_system_mode_get() & 0x40) {
             for (int i = 0; i < state->width * 8; i++) {
                 MEM_TILE_4BPP(tile)[i * 4] = 0;
             }
-            vwf8_draw_string(MEM_TILE_4BPP(tile), text, 1);
+            vwf8_draw_string(MEM_TILE_4BPP(tile), submenu_text, 1);
         } else {
             memset(MEM_TILE(tile), 0, 16 * state->width);
-            vwf8_draw_string(MEM_TILE(tile), text, 1);
+            vwf8_draw_string(MEM_TILE(tile), submenu_text, 1);
         }
         ws_screen_modify_tiles(
             screen_2, ~SCR_ATTR_PALETTE_MASK, (i == selected) ? SCR_ATTR_PALETTE(11) : SCR_ATTR_PALETTE(10),

@@ -25,6 +25,13 @@
 #include <ws.h>
 
 #ifdef __WONDERFUL_WWITCH__
+// Store some buffers in SRAM (DS) instead of IRAM.
+#define WW_STATIC static
+#else
+#define WW_STATIC
+#endif
+
+#ifdef __WONDERFUL_WWITCH__
 
 #define screen_1 ((ws_screen_cell_t __wf_iram*) 0x1000)
 #define screen_2 ((ws_screen_cell_t __wf_iram*) 0x1800)

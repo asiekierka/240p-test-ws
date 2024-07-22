@@ -69,8 +69,8 @@ static void display_drop_shadow_tick(void *ud, bool submenu_active) {
 }
 
 void display_drop_shadow(void *userdata) {
-	drop_shadow_userdata_t drop_shadow_userdata;
-	submenu_state_t submenu;
+	WW_STATIC drop_shadow_userdata_t drop_shadow_userdata;
+	WW_STATIC submenu_state_t submenu;
 	submenu.x = 0;
 	submenu.y = 0;
 	submenu.tile_start = 388;

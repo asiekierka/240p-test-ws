@@ -72,7 +72,7 @@ static const submenu_entry_t __wf_rom submenu_shade[] = {
 };
 
 void display_solid_color(void *userdata) {
-	submenu_state_t submenu;
+	WW_STATIC submenu_state_t submenu;
 	submenu.x = 0;
 	submenu.y = 0;
 	submenu.tile_start = 1;

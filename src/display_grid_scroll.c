@@ -39,8 +39,8 @@ static void display_grid_scroll_tick(void *ud, bool submenu_active) {
 }
 
 void display_grid_scroll(void *userdata) {
-	grid_scroll_userdata_t grid_scroll_userdata;
-	submenu_state_t submenu;
+	WW_STATIC grid_scroll_userdata_t grid_scroll_userdata;
+	WW_STATIC submenu_state_t submenu;
 	submenu.x = 0;
 	submenu.y = 0;
 	submenu.tile_start = 1;
