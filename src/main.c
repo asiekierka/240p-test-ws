@@ -119,7 +119,6 @@ int vwf8_draw_char(uint8_t __wf_iram* tile, uint8_t chr, int x) {
     if (ws_system_mode_get() & 0x40) {
         tile += (x >> 3) << 5;
 
-		#pragma GCC unroll 8
         for (int i = 0; i < 8; i++, font++, tile += 4) {
             uint16_t shift = (*font) << x_fine;
             tile[0] = ((tile[0] & (mask >> 8)) | (shift >> 8)) & 0xFF;
@@ -128,7 +127,6 @@ int vwf8_draw_char(uint8_t __wf_iram* tile, uint8_t chr, int x) {
     } else {
         tile += (x >> 3) << 4;
 
-		#pragma GCC unroll 8
         for (int i = 0; i < 8; i++, font++, tile += 2) {
             uint16_t shift = (*font) << x_fine;
             tile[0] = ((tile[0] & (mask >> 8)) | (shift >> 8)) & 0xFF;
@@ -148,7 +146,7 @@ int vwf8_draw_string(uint8_t __wf_iram* tile, const char __wf_rom* s, int x) {
 
 // === About screen ===
 
-static const char __wf_rom main_menu_name[] = "- 144p Test Suite for WS (0.2.0) -";
+static const char __wf_rom main_menu_name[] = "- 144p Test Suite for WS (0.2.1) -";
 
 // @ - force left align
 static const char __wf_rom empty_line[] = "";
@@ -261,7 +259,9 @@ static const menu_entry_t __wf_rom main_menu_entries[] = {
 #endif
 	MENU_ENTRY(display_grid, NULL, 0),
 	MENU_ENTRY(display_drop_shadow, NULL, 0),
+#ifndef __WONDERFUL_WWITCH__
 	MENU_ENTRY(display_grid_scroll, NULL, 0),
+#endif
 	MENU_ENTRY(display_stripes, NULL, 0),
 	MENU_ENTRY(display_color_bleed, NULL, MF_COLOR_ONLY),
 	MENU_ENTRY(display_about, NULL, 0),
