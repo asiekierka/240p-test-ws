@@ -35,13 +35,14 @@ static uint16_t last_keys = 0;
 uint16_t curr_keys = 0;
 
 uint16_t scan_keys(void) {
-	last_keys = curr_keys;
 #ifdef __WONDERFUL_WWITCH__
-	curr_keys = key_press_check();
+	curr_keys = key_hit_check_with_repeat();
+	return curr_keys;
 #else
+	last_keys = curr_keys;
 	curr_keys = ws_keypad_scan();
-#endif
 	return curr_keys & ~last_keys;
+#endif
 }
 
 #ifndef __WONDERFUL_WWITCH__

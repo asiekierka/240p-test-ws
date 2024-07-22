@@ -94,8 +94,8 @@ void display_drop_shadow(void *userdata) {
 		ws_system_mode_set(WS_MODE_COLOR_4BPP);
 		memset(MEM_TILE_4BPP_BANK0(0), 0, sizeof(ws_tile_4bpp_t));
 		tile_copy_2bpp_to_4bpp(MEM_TILE_4BPP_BANK0(384), gfx_mono_star_top_left, 4 * 16);
-		ws_dma_copy_words(MEM_COLOR_PALETTE(0), gfx_color_pyramid_palette, gfx_color_pyramid_palette_size);
-		ws_dma_copy_words(MEM_TILE_4BPP_BANK1(1), gfx_color_pyramid_tiles, gfx_color_pyramid_tiles_size);
+		memcpy(MEM_COLOR_PALETTE(0), gfx_color_pyramid_palette, gfx_color_pyramid_palette_size);
+		memcpy(MEM_TILE_4BPP_BANK1(1), gfx_color_pyramid_tiles, gfx_color_pyramid_tiles_size);
 		MEM_COLOR_PALETTE(12)[1] = 0x000;
 		ws_screen_put_tiles(screen_1, gfx_color_pyramid_map, 0, 0, 28, 18);
 		ws_screen_modify_tiles(screen_1, ~SCR_ENTRY_BANK_MASK, SCR_ENTRY_BANK(1), 0, 0, 28, 18);
