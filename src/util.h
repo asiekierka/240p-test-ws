@@ -15,20 +15,13 @@
  * with 240p-test-ws. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
+#ifndef __UTIL_H__
+#define __UTIL_H__
 
 #include <stddef.h>
 #include <wonderful.h>
 #include <ws.h>
-#include "util.h"
-#include "vwf8.h"
 
-extern volatile uint16_t vbl_ticks;
-extern uint16_t curr_keys;
-uint16_t scan_keys(void);
-
-void vblank_wait(void);
-void wait_keypress(void);
+void tile_copy_2bpp_to_4bpp(uint8_t __wf_iram* dest, const uint8_t __wf_rom* src, size_t len);
 
 #endif

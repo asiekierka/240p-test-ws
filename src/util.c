@@ -15,20 +15,23 @@
  * with 240p-test-ws. If not, see <https://www.gnu.org/licenses/>.
  */
 
-#ifndef __MAIN_H__
-#define __MAIN_H__
-
-#include <stddef.h>
+#include <string.h>
 #include <wonderful.h>
 #include <ws.h>
-#include "util.h"
-#include "vwf8.h"
-
-extern volatile uint16_t vbl_ticks;
-extern uint16_t curr_keys;
-uint16_t scan_keys(void);
-
-void vblank_wait(void);
-void wait_keypress(void);
-
+#include <ws/display.h>
+#ifdef __WONDERFUL_WWITCH__
+#include <sys/bios.h>
 #endif
+
+#include "../build/assets/fonts.h"
+
+void tile_copy_2bpp_to_4bpp(uint8_t __wf_iram* dest, const uint8_t __wf_rom* src, size_t len) {
+	uint16_t __wf_iram* dest16 = (uint16_t __wf_iram*) dest;
+	const uint16_t __wf_rom* src16 = (const uint16_t __wf_rom*) src;
+
+	while (len) {
+		*(dest16++) = *(src16++);
+		*(dest16++) = 0;
+		len -= 2;
+	}
+}
