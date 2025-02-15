@@ -81,12 +81,12 @@ void display_exit(void *userdata) {
 
 // === About screen ===
 
-static const char __wf_rom main_menu_name[] = "- 144p Test Suite for WS (0.2.1) -";
+static const char __wf_rom main_menu_name[] = "- 144p Test Suite for WS (0.2.2) -";
 
 // @ - force left align
 static const char __wf_rom empty_line[] = "";
 
-static const char __wf_rom about_line03[] = "(c) 2024 Adrian \"asie\" Siekierka";
+static const char __wf_rom about_line03[] = "(c) 2024, 2025 Adrian \"asie\" Siekierka";
 static const char __wf_rom about_line04[] = "Original project by Artemio Urbina";
 
 static const char __wf_rom about_line06[] = "@License GPLv3+: GNU GPL version 3 or later";
