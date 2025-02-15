@@ -21,6 +21,7 @@
 #include <ws/display.h>
 #include <ws/hardware.h>
 #include <ws/keypad.h>
+#include <ws/system.h>
 
 #include "iram.h"
 #include "main.h"
@@ -38,6 +39,24 @@ static void display_grid_scroll_tick(void *ud, bool submenu_active) {
 	outportb(IO_SCR1_SCRL_Y, inportb(IO_SCR1_SCRL_Y) + userdata->dy);
 }
 
+static const submenu_entry_t __wf_rom submenu_rgb[] = {
+    SUBMENU_ENTRY(submenu_rgb, 0),
+    SUBMENU_ENTRY(submenu_rgb, 0),
+    SUBMENU_ENTRY(submenu_rgb, 0),
+    SUBMENU_ENTRY(submenu_rgb, 0),
+    SUBMENU_ENTRY(submenu_rgb, 0),
+    SUBMENU_ENTRY(submenu_rgb, 0),
+    SUBMENU_ENTRY(submenu_vrr, 0),
+    SUBMENU_ENTRY_END()
+};
+
+static const submenu_entry_t __wf_rom submenu_shade[] = {
+    SUBMENU_ENTRY(submenu_shade, 0),
+    SUBMENU_ENTRY(submenu_shade, 0),
+    SUBMENU_ENTRY(submenu_vrr, 0),
+    SUBMENU_ENTRY_END()
+};
+
 void display_grid_scroll(void *userdata) {
 	WW_STATIC grid_scroll_userdata_t grid_scroll_userdata;
 	WW_STATIC submenu_state_t submenu;
@@ -45,7 +64,6 @@ void display_grid_scroll(void *userdata) {
 	submenu.y = 0;
 	submenu.tile_start = 1;
 	submenu.width = 6;
-	submenu.entries = submenu_vrr;
 	submenu.tick = display_grid_scroll_tick;
 	submenu.userdata = &grid_scroll_userdata;
 
@@ -56,7 +74,19 @@ void display_grid_scroll(void *userdata) {
 	outportb(IO_SCR_BASE, SCR1_BASE(screen_1) | SCR2_BASE(screen_2));
 
 	memcpy(MEM_TILE(0), tile_grid, 16);
-	outportw(IO_SCR_PAL_0, MONO_PAL_COLORS(7, 0, 0, 0));
+	if (ws_system_is_color()) {
+        // Use color 0/1
+		ws_system_mode_set(WS_MODE_COLOR);
+        MEM_COLOR_PALETTE(0)[0] = RGB(0, 0, 0);
+        MEM_COLOR_PALETTE(0)[1] = RGB(15, 15, 15);
+        submenu.entries = submenu_rgb;
+	} else {
+        // Use shade LUT entry 4/5
+		ws_display_set_shade_lut(SHADE_LUT_DEFAULT);
+        outportb(IO_LCD_SHADE_45, 0xF0);
+		outportw(IO_SCR_PAL_0, MONO_PAL_COLORS(5, 4, 4, 4));
+		submenu.entries = submenu_shade;
+	}
 	ws_screen_fill_tiles(screen_1, 0, 0, 0, 32, 32);
 
 	outportw(IO_DISPLAY_CTRL, DISPLAY_SCR1_ENABLE);

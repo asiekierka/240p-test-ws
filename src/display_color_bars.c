@@ -21,12 +21,8 @@
 
 #include "iram.h"
 #include "main.h"
+#include "strings.h"
 
-static const char __wf_rom text_red[] = "Red";
-static const char __wf_rom text_green[] = "Green";
-static const char __wf_rom text_blue[] = "Blue";
-static const char __wf_rom text_white[] = "White";
-static const char __wf_rom hex_digits[] = "0123456789ABCDEF";
 static const uint32_t __wf_rom bar_data[24] = {
     0x00000000,
     0x0000000F,
@@ -96,12 +92,12 @@ void display_color_bars(void *userdata) {
 		ws_screen_put_tile(screen_1, 92 + i, i, 15);
 	}
 	for (int i = 0; i < 16; i++) {
-		vwf8_draw_char((uint8_t __wf_iram*) MEM_TILE_4BPP(32), hex_digits[i], i * 12);
+		vwf8_draw_char((uint8_t __wf_iram*) MEM_TILE_4BPP(32), s_hex_digits[i], i * 12);
 	}
-	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(80), text_red, 0);
-	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(84), text_green, 0);
-	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(88), text_blue, 0);
-	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(92), text_white, 0);
+	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(80), s_red, 0);
+	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(84), s_green, 0);
+	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(88), s_blue, 0);
+	vwf8_draw_string((uint8_t __wf_iram*) MEM_TILE_4BPP(92), s_white, 0);
 
 	outportb(IO_SCR1_SCRL_X, 252);
 	outportb(IO_SCR1_SCRL_Y, 6);

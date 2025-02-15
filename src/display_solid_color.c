@@ -24,38 +24,37 @@
 
 #include "iram.h"
 #include "main.h"
+#include "strings.h"
 #include "submenu.h"
 
-static const char __wf_rom red_format[] = "Red: %d";
-static const char __wf_rom green_format[] = "Green: %d";
-static const char __wf_rom blue_format[] = "Blue: %d";
-static const char __wf_rom shade_format[] = "Shade: %d";
-
-static void submenu_rgb_draw(int id, char* buf, void* userdata) {
+void submenu_rgb_draw(int id, char* buf, void* userdata) {
     const char __wf_rom *format;
     int shift;
-    if (id == 0) { format = red_format; shift = 8; }
-    if (id == 1) { format = green_format; shift = 4; }
-    if (id == 2) { format = blue_format; shift = 0; }
-    sprintf(buf, format, (MEM_COLOR_PALETTE(0)[0] >> shift) & 0xF);
+    int color = id / 3;
+    id %= 3;
+    if (id == 0) { format = s_red_format; shift = 8; }
+    if (id == 1) { format = s_green_format; shift = 4; }
+    if (id == 2) { format = s_blue_format; shift = 0; }
+    sprintf(buf, format, (MEM_COLOR_PALETTE(0)[color] >> shift) & 0xF);
 }
 
-static void submenu_shade_draw(int id, char* buf, void* userdata) {
-    sprintf(buf, shade_format, inportb(IO_LCD_SHADE_45) >> 4);
+void submenu_shade_draw(int id, char* buf, void* userdata) {
+    sprintf(buf, s_shade_format, (inportb(IO_LCD_SHADE_45) >> (id ? 0 : 4)) & 0xF);
 }
 
 #define KEY_HANDLER(col, shift) \
     if (keys & KEY_X4) col = (col & ~(0xF << shift)) | ((col - (1 << shift)) & (0xF << shift)); \
     if (keys & KEY_X2) col = (col & ~(0xF << shift)) | ((col + (1 << shift)) & (0xF << shift));
 
-static void submenu_rgb_key  (int id, uint16_t keys, void* userdata) {
-    KEY_HANDLER(MEM_COLOR_PALETTE(0)[0], ((2 - id) * 4));
+void submenu_rgb_key  (int id, uint16_t keys, void* userdata) {
+    KEY_HANDLER(MEM_COLOR_PALETTE(0)[id / 3], ((2 - (id % 3)) * 4));
 }
 
-static void submenu_shade_key(int id, uint16_t keys, void* userdata) {
+void submenu_shade_key(int id, uint16_t keys, void* userdata) {
     uint8_t shade = inportb(IO_LCD_SHADE_45);
-    if (keys & KEY_X4) shade -= 0x10;
-    if (keys & KEY_X2) shade += 0x10;
+    uint8_t v = id ? 0x01 : 0x10;
+    if (keys & KEY_X4) shade -= v;
+    if (keys & KEY_X2) shade += v;
     outportb(IO_LCD_SHADE_45, shade);
 }
 

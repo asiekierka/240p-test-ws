@@ -40,6 +40,12 @@ typedef struct {
     void *userdata; /* provided */
 } submenu_state_t;
 
+extern void submenu_rgb_draw(int id, char* buf, void* userdata);
+extern void submenu_rgb_key(int id, uint16_t keys, void* userdata);
+extern void submenu_shade_draw(int id, char* buf, void* userdata);
+extern void submenu_shade_key(int id, uint16_t keys, void* userdata);
+extern void submenu_vrr_draw(int id, char* buf, void* userdata);
+extern void submenu_vrr_key(int id, uint16_t keys, void* userdata);
 extern const submenu_entry_t __wf_rom submenu_vrr[];
 
 /**
