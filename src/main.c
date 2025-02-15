@@ -36,14 +36,13 @@ static uint16_t last_keys = 0;
 uint16_t curr_keys = 0;
 
 uint16_t scan_keys(void) {
-#ifdef __WONDERFUL_WWITCH__
-	curr_keys = key_hit_check_with_repeat();
-	return curr_keys;
-#else
 	last_keys = curr_keys;
+#ifdef __WONDERFUL_WWITCH__
+	curr_keys = key_press_check();
+#else
 	curr_keys = ws_keypad_scan();
-	return curr_keys & ~last_keys;
 #endif
+	return curr_keys & ~last_keys;
 }
 
 #ifndef __WONDERFUL_WWITCH__
@@ -194,9 +193,7 @@ static const menu_entry_t __wf_rom main_menu_entries[] = {
 #endif
 	MENU_ENTRY(display_grid, NULL, 0),
 	MENU_ENTRY(display_drop_shadow, NULL, 0),
-#ifndef __WONDERFUL_WWITCH__
 	MENU_ENTRY(display_grid_scroll, NULL, 0),
-#endif
 	MENU_ENTRY(display_stripes, NULL, 0),
 	MENU_ENTRY(display_color_bleed, NULL, MF_COLOR_ONLY),
 	MENU_ENTRY(display_about, NULL, 0),
@@ -313,6 +310,10 @@ menu_redraw:
 };
 
 void main(void) {
+	// Initialize key buffer
+	last_keys = 0;
+	last_keys = scan_keys();
+
 	display_menu(main_menu_entries);
 	while(1);
 }
