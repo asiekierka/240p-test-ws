@@ -15,12 +15,18 @@
  * with 240p-test-ws. If not, see <https://www.gnu.org/licenses/>.
  */
 
+#include <wonderful.h>
+
     .arch   i186
     .code16
     .intel_syntax noprefix
     .global grey_ramp_line_int_handler
 
+#ifdef __WONDERFUL_WWITCH__
+    .section .text
+#else
     .section .fartext.s.grey_ramp_line_int_handler, "a"
+#endif
     .align 2
 grey_ramp_line_int_handler:
     push ax
@@ -40,4 +46,8 @@ __grey_ramp_no_more_lines:
     mov al, 0x10
     out 0xB6, al
     pop ax
+#ifdef __WONDERFUL_WWITCH__
+    retf
+#else
     iret
+#endif

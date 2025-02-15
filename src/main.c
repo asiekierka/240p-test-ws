@@ -189,8 +189,8 @@ static const menu_entry_t __wf_rom main_menu_entries[] = {
 	MENU_ENTRY(display_solid_color, NULL, 0),
 #ifndef __WONDERFUL_WWITCH__
 	MENU_ENTRY(display_full_color, NULL, MF_COLOR_ONLY),
-	MENU_ENTRY(display_grey_ramp, NULL, 0),
 #endif
+	MENU_ENTRY(display_grey_ramp, NULL, 0),
 	MENU_ENTRY(display_grid, NULL, 0),
 	MENU_ENTRY(display_drop_shadow, NULL, 0),
 	MENU_ENTRY(display_grid_scroll, NULL, 0),

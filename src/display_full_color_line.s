@@ -15,6 +15,8 @@
  * with 240p-test-ws. If not, see <https://www.gnu.org/licenses/>.
  */
 
+ #include <wonderful.h>
+
     .arch   i186
     .code16
     .intel_syntax noprefix
@@ -26,17 +28,28 @@
 full_color_line_offset:
     .word 0
 
+#ifdef __WONDERFUL_WWITCH__
+    .section .text
+#else
     .section .fartext.s.full_color_line_int_handler, "a"
+#endif
     .align 2
 full_color_line_int_handler:
     push ax
+#ifndef __WONDERFUL_WWITCH__
     push ds
     push ss
     pop ds
+#endif
     push si
 
     mov ax, 128
     mov si, word ptr [full_color_line_offset]
+#ifdef __WONDERFUL_WWITCH__
+    push ds
+    push ss
+    pop ds
+#endif
 .rept 8
     add word ptr [si + 0], ax
     add word ptr [si + 2], ax
@@ -48,6 +61,9 @@ full_color_line_int_handler:
     add word ptr [si + 14], ax
     add si, 0x20
 .endr
+#ifdef __WONDERFUL_WWITCH__
+    pop ds
+#endif
     xor word ptr [full_color_line_offset], 0x100
 
     in al, 0x03
@@ -60,6 +76,12 @@ __full_color_no_more_lines:
     mov al, 0x10
     out 0xB6, al
     pop si
+#ifndef __WONDERFUL_WWITCH__
     pop ds
+#endif
     pop ax
+#ifdef __WONDERFUL_WWITCH__
+    retf
+#else
     iret
+#endif
