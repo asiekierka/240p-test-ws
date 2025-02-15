@@ -43,6 +43,7 @@ BUILDDIR	:= build/ww
 ELF		:= build/ww/$(NAME).elf
 MAP		:= build/ww/$(NAME).map
 EXECUTABLE	:= 144p-test-ws.fx
+INCLUDEDIRS     += $(BUILDDIR)
 
 # Verbose flag
 # ------------

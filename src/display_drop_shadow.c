@@ -20,9 +20,9 @@
 #include <ws.h>
 #include <ws/display.h>
 
-#include "../build/assets/color/pyramid.h"
-#include "../build/assets/mono/pyramid.h"
-#include "../build/assets/mono/star_top_left.h"
+#include "assets/color/pyramid.h"
+#include "assets/mono/pyramid.h"
+#include "assets/mono/star_top_left.h"
 
 #include "iram.h"
 #include "main.h"

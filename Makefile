@@ -37,6 +37,7 @@ BUILDDIR	:= build
 ELF		:= build/$(NAME).elf
 ELF_STAGE1	:= build/$(NAME)_stage1.elf
 ROM		:= $(NAME).wsc
+INCLUDEDIRS     += $(BUILDDIR)
 
 # Verbose flag
 # ------------

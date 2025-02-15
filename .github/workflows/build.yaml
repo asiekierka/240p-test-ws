@@ -1,0 +1,51 @@
+name: Build
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+
+jobs:
+  build:
+    name: Build (.wsc)
+    runs-on: ubuntu-latest
+    container: cbrzeszczot/wonderful:wswan-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Install additional dependencies
+        run: wf-pacman -Syu --noconfirm wf-tools wf-superfamiconv wf-zx0-salvador
+
+      - name: Build
+        run: make
+
+      - name: Archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: 144p Test Suite for WS (.wsc)
+          path: 144p-test-ws.wsc
+
+  build-ww:
+    name: Build (.fx)
+    runs-on: ubuntu-latest
+    container: cbrzeszczot/wonderful:wswan-latest
+    steps:
+      - name: Clone project
+        uses: actions/checkout@v3
+        with:
+          submodules: true
+
+      - name: Install additional dependencies
+        run: wf-pacman -Syu --noconfirm wf-tools wf-superfamiconv wf-zx0-salvador
+
+      - name: Build
+        run: make -f Makefile.ww
+
+      - name: Archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: 144p Test Suite for WW (.fx)
+          path: 144p-test-ws.fx

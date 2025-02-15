@@ -23,7 +23,7 @@
 #include <sys/bios.h>
 #endif
 
-#include "../build/assets/fonts.h"
+#include "assets/fonts.h"
 
 #include "iram.h"
 

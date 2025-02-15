@@ -23,7 +23,7 @@
 #include <sys/bios.h>
 #endif
 
-#include "../build/assets/fonts.h"
+#include "assets/fonts.h"
 
 void tile_copy_2bpp_to_4bpp(uint8_t __wf_iram* dest, const uint8_t __wf_rom* src, size_t len) {
 	uint16_t __wf_iram* dest16 = (uint16_t __wf_iram*) dest;
