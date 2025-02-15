@@ -19,6 +19,7 @@
 #include <wonderful.h>
 #include <ws.h>
 #include <ws/display.h>
+#include <wsx/zx0.h>
 
 #include "assets/color/pyramid.h"
 #include "assets/mono/pyramid.h"
@@ -94,8 +95,9 @@ void display_drop_shadow(void *userdata) {
 		ws_system_mode_set(WS_MODE_COLOR_4BPP);
 		memset(MEM_TILE_4BPP_BANK0(0), 0, sizeof(ws_tile_4bpp_t));
 		tile_copy_2bpp_to_4bpp(MEM_TILE_4BPP_BANK0(384), gfx_mono_star_top_left, 4 * 16);
+		MEM_COLOR_PALETTE(0)[0] = 0x000;
+		wsx_zx0_decompress(MEM_TILE_4BPP_BANK1(1), gfx_color_pyramid_tiles);
 		memcpy(MEM_COLOR_PALETTE(0), gfx_color_pyramid_palette, gfx_color_pyramid_palette_size);
-		memcpy(MEM_TILE_4BPP_BANK1(1), gfx_color_pyramid_tiles, gfx_color_pyramid_tiles_size);
 		MEM_COLOR_PALETTE(12)[1] = 0x000;
 		ws_screen_put_tiles(screen_1, gfx_color_pyramid_map, 0, 0, 28, 18);
 		ws_screen_modify_tiles(screen_1, ~SCR_ENTRY_BANK_MASK, SCR_ENTRY_BANK(1), 0, 0, 28, 18);
@@ -103,7 +105,7 @@ void display_drop_shadow(void *userdata) {
 		ws_display_set_shade_lut(SHADE_LUT_DEFAULT);
 		memset(MEM_TILE(0), 0, sizeof(ws_tile_t));
 		memcpy(MEM_TILE(384), gfx_mono_star_top_left, 4 * 16);
-		memcpy(MEM_TILE(1), gfx_mono_pyramid_tiles, gfx_mono_pyramid_tiles_size);
+		wsx_zx0_decompress(MEM_TILE(1), gfx_mono_pyramid_tiles);
 		ws_portcpy(IO_SCR_PAL_0, gfx_mono_pyramid_palette, gfx_mono_pyramid_palette_size);
 		outportw(IO_SCR_PAL_12, MONO_PAL_COLORS(7, 7, 7, 7));
 		ws_screen_put_tiles(screen_1, gfx_mono_pyramid_map, 0, 0, 28, 18);
