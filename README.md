@@ -5,6 +5,7 @@ for the WonderSwan.
 
 Currently implemented (Mono/Color):
 
+- Controller test
 - PLUGE
 - Solid color
 - Grey ramp

@@ -32,7 +32,7 @@
 // === General constants, IRQ handler ===
 
 volatile uint16_t vbl_ticks = 0;
-static uint16_t last_keys = 0;
+uint16_t last_keys = 0;
 uint16_t curr_keys = 0;
 
 uint16_t scan_keys(void) {
@@ -169,6 +169,9 @@ void display_solid_color(void *userdata);
 static const char __wf_rom display_stripes_name[] = "Stripes/Checkerboard";
 void display_stripes(void *userdata);
 
+static const char __wf_rom input_test_name[] = "Controller test";
+void input_test(void *userdata);
+
 // === Menu system ===
 
 #define MF_COLOR_ONLY (1 << 0)
@@ -184,6 +187,7 @@ typedef struct {
 
 static const menu_entry_t __wf_rom main_menu_entries[] = {
 	MENU_ENTRY_TITLE(main_menu),
+	MENU_ENTRY(input_test, NULL, 0),
 	MENU_ENTRY(display_pluge, NULL, 0),
 	MENU_ENTRY(display_color_bars, NULL, MF_COLOR_ONLY),
 	MENU_ENTRY(display_solid_color, NULL, 0),

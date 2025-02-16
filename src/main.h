@@ -26,6 +26,7 @@
 
 extern volatile uint16_t vbl_ticks;
 extern uint16_t curr_keys;
+extern uint16_t last_keys;
 uint16_t scan_keys(void);
 
 void vblank_wait(void);
