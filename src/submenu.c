@@ -105,7 +105,7 @@ void submenu_draw(submenu_state_t *state, uint16_t selected) {
         submenu_draw_compiler_workaround(current_entry, i, submenu_text, state->userdata);
         if (ws_system_mode_get() & 0x40) {
             for (int i = 0; i < state->width * 8; i++) {
-                MEM_TILE_4BPP(tile)[i * 4] = 0;
+                MEM_TILE_4BPP(tile)->row[i * 4] = 0;
             }
             vwf8_draw_string(MEM_TILE_4BPP(tile), submenu_text, 1);
         } else {

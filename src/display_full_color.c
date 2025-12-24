@@ -93,9 +93,9 @@ void display_full_color(void *userdata) {
 	sys_interrupt_set_hook(SYS_INT_VBLANK, vblank_vectors + 0, vblank_vectors + 1);
 #else
 	cpu_irq_disable();
-	ws_hwint_set_handler(HWINT_IDX_LINE, full_color_line_int_handler);
-	ws_hwint_set_handler(HWINT_IDX_VBLANK, full_color_vblank_int_handler);
-	ws_hwint_set(HWINT_LINE | HWINT_VBLANK);
+	ws_int_set_handler(HWINT_IDX_LINE, full_color_line_int_handler);
+	ws_int_set_handler(HWINT_IDX_VBLANK, full_color_vblank_int_handler);
+	ws_int_set_enabled(HWINT_LINE | HWINT_VBLANK);
 	cpu_irq_enable();
 #endif
 

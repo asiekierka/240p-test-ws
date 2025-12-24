@@ -223,7 +223,7 @@ static int display_menu_init(const menu_entry_t __wf_rom* entries, int menu_y) {
 #ifndef __WONDERFUL_WWITCH__
 	cpu_irq_disable();
 	ws_hwint_set_handler(HWINT_IDX_VBLANK, vblank_int_handler);
-	ws_hwint_set(HWINT_VBLANK);
+	ws_int_set_enabled(HWINT_VBLANK);
 	cpu_irq_enable();
 #endif
 

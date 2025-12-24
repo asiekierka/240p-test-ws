@@ -33,8 +33,8 @@
 
 #ifdef __WONDERFUL_WWITCH__
 
-#define screen_1 ((ws_screen_cell_t __wf_iram*) 0x1000)
-#define screen_2 ((ws_screen_cell_t __wf_iram*) 0x1800)
+#define screen_1 ((uint16_t __wf_iram*) 0x1000)
+#define screen_2 ((uint16_t __wf_iram*) 0x1800)
 #define sprites ((ws_sprite_t __wf_iram*) 0xE00)
 
 #else
@@ -64,9 +64,9 @@ IRAM_EXTERN ws_tile_4bpp_t tile_4bpp_bank1[512];
 // Using ".iram" instead of ".iramx" will cause them to be automatically
 // cleared on startup.
 __attribute__((section(".iram_screen.a")))
-IRAM_EXTERN ws_screen_cell_t __wf_iram screen_1[32*32];
+IRAM_EXTERN uint16_t __wf_iram screen_1[32*32];
 __attribute__((section(".iram_screen.b")))
-IRAM_EXTERN ws_screen_cell_t __wf_iram screen_2[32*32];
+IRAM_EXTERN uint16_t __wf_iram screen_2[32*32];
 
 // Declare a sprite table.
 __attribute__((section(".iramx_sprite")))
